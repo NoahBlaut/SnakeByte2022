@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
 public class TeleLib {
     public DcMotor fl;
     public DcMotor fr;
@@ -11,12 +12,14 @@ public class TeleLib {
     public DcMotor br;
 
     public DcMotor lift;
+    public DcMotor fB;
 
-    public Servo right;
-    public Servo left;
+    public Servo clamp;
 
     OpMode opMode;
     public boolean isOpen = true;
+    // front or back = true means front, false means back
+    public boolean frontOrBack = true;
 
     public TeleLib(OpMode opMode) {
         fl = opMode.hardwareMap.dcMotor.get("fl");
@@ -32,11 +35,11 @@ public class TeleLib {
         br.setDirection(DcMotor.Direction.REVERSE);
         bl.setDirection(DcMotor.Direction.FORWARD);
 
-        lift = opMode.hardwareMap.dcMotor.get("lift");
+        lift = opMode.hardwareMap.dcMotor.get("lift1");
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        right = opMode.hardwareMap.servo.get("rightServo");
-        left = opMode.hardwareMap.servo.get("leftServo");
+        fB = opMode.hardwareMap.dcMotor.get("4Bar");
+        fB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        clamp = opMode.hardwareMap.servo.get("clamp");
 
 
         resetEncoders();
@@ -58,6 +61,8 @@ public class TeleLib {
     public void resetLiftEncoder() {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void drivetrain(OpMode opMode) {
@@ -93,7 +98,7 @@ public class TeleLib {
     
     public void lift(OpMode opMode) throws InterruptedException {
         if(Math.abs(opMode.gamepad2.left_stick_y) > 0.1) {
-            if (opMode.gamepad2.right_trigger > .2) {
+            if (opMode.gamepad2.left_trigger > .2) {
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 lift.setPower(opMode.gamepad2.left_stick_y * .5);
             } else {
@@ -106,23 +111,101 @@ public class TeleLib {
             lift.setPower(.5);
         }
 
-        if (opMode.gamepad2.a) {
+        if (opMode.gamepad2.right_bumper) {
             if (isOpen) {
-                right.setPosition(0.5);
-                left.setPosition(1);
+                clamp.setPosition(0.5);
             } else {
-                right.setPosition(1);
-                left.setPosition(0.5);
+                clamp.setPosition(0);
             }
             isOpen = !isOpen;
             opMode.telemetry.addData("isOpen", isOpen);
             opMode.telemetry.update();
-            while (opMode.gamepad2.a) {
+            while (opMode.gamepad2.right_bumper) {
                 Thread.sleep(100);
             }
         }
+        if(opMode.gamepad2.left_bumper){
+            frontOrBack = !frontOrBack;
+            if(frontOrBack){
+                opMode.telemetry.addLine("front");
+            } else{
+                opMode.telemetry.addLine("back");
+            }
+            opMode.telemetry.update();
+            while (opMode.gamepad2.right_bumper) {
+                Thread.sleep(100);
+            }
+        }
+        if(Math.abs(opMode.gamepad2.right_stick_y) > 0.1){
+            if(opMode.gamepad2.right_trigger > 0.1){
+                fB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                fB.setPower(opMode.gamepad2.left_stick_y * .375);
+            }else{
+                fB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                fB.setPower(opMode.gamepad2.left_stick_y*.75);
+            }
+        } else{
+            fB.setTargetPosition(fB.getCurrentPosition());
+            fB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            fB.setPower(.1);
+        }
+        if(opMode.gamepad2.x){
+            liftToPos(0,.75);
+            fbToPos(0,.5);
+            clamp.setPosition(.5);
+        } else{
+            fbToPos(fB.getCurrentPosition(),.1);
+            liftToPos(lift.getCurrentPosition(), .5);
+        }
+        if(opMode.gamepad2.a){
+            clamp.setPosition(0.5);
+            liftToPos(0,.75);
+            if(frontOrBack){
+                fbToPos(90,.5);
+            } else{
+                fbToPos(245,.5);
+            }
+        } else{
+            fbToPos(fB.getCurrentPosition(),.1);
+            liftToPos(lift.getCurrentPosition(), .5);
+        }
+        if(opMode.gamepad2.b){
+            clamp.setPosition(0.5);
+            if(frontOrBack){
+                fbToPos(90,.5);
+            } else{
+                fbToPos(245,.5);
+            }
+            liftToPos(540,.75);
+        } else{
+            fbToPos(fB.getCurrentPosition(),.1);
+            liftToPos(lift.getCurrentPosition(), .5);
+        }
+        if(opMode.gamepad2.y){
+            clamp.setPosition(0);
+            if(frontOrBack){
+                fbToPos(90,.5);
+            } else{
+                fbToPos(245,.5);
+            }
+            liftToPos(1080,.75);
+        } else{
+            fbToPos(fB.getCurrentPosition(),.1);
+            liftToPos(lift.getCurrentPosition(), .5);
+        }
     }
 
+    public void liftToPos(int targetPos, double power){
+        lift.setTargetPosition(targetPos);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(.85);
+    }
+
+    public void fbToPos(int targetPos, double power){
+        fB.setTargetPosition(targetPos);
+        fB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fB.setPower(.5);
+    }
     public void kill() {
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

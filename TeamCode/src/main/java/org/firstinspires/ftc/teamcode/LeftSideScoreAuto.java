@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.utils.AutoMethods;
@@ -11,15 +11,17 @@ import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 
-@Disabled
-@Autonomous(name = "Left Side Auto", group = "Score Auto")
+@Autonomous(name = "Left Side Score Auto", group = "Auto")
 public class LeftSideScoreAuto extends LinearOpMode {
+
     int tagOfInterest = 0;
+    ElapsedTime timeLeft = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        // Camera Setup
+        // Camera/Robot Setup
         AutoMethods robot = new AutoMethods();
+        robot.ready(this);
         AprilTagDetectionPipeline aprilTagDetectionPipeline = robot.cameraSetup(this);
 
         while (!isStarted() && !isStopRequested()) {
@@ -49,46 +51,45 @@ public class LeftSideScoreAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.ready(this);
-
         waitForStart();
+        timeLeft.reset();
+        robot.MoveInchEncoder(.6,1960);
+        robot.moveLift(1,"high");
+        robot.fourBar.setPosition(.5);
+        robot.Strafe(-.6,280);
+        robot.MoveInchEncoder(.4,350);
+        robot.claw(false);
+        sleep(250);
+        double ticksToCones = 1540;
+        double fourBarPos = .75;
+        while(timeLeft.seconds() <= 23) {
 
-        while(!isStopRequested() && opModeIsActive()){
-            if(tagOfInterest == 1) {
-                robot.MoveInchEncoder(-.25,650);
-                robot.Strafe(.25, 1050);
-                robot.moveLift(.5, "high");
-                sleep(200);
-                robot.MoveInchEncoder(.25, 60);
-                robot.clamp(false);
-                sleep(200);
-                robot.MoveInchEncoder(-.25, 60);
-                robot.Strafe(-.25, 200);
-            } else if(tagOfInterest == 2) {
-                robot.Strafe(.25, 400);
-                robot.moveLift(.5, "high");
-                sleep(200);
-                robot.MoveInchEncoder(.25,60);
-                robot.clamp(true);
-                sleep(200);
-                robot.MoveInchEncoder(-.5,60);
-                robot.Strafe(.25, 250);
-            } else if (tagOfInterest == 3) {
-                robot.Strafe(.25, 400);
-                robot.moveLift(.5, "high");
-                sleep(200);
-                robot.MoveInchEncoder(.25,60);
-                robot.clamp(false);
-                sleep(200);
-                robot.MoveInchEncoder(-.5,60);
-                robot.Strafe(.25, 250);
-                robot.MoveInchEncoder(1, 650);
-            } else {
-                telemetry.clearAll();
-                telemetry.addLine("FATAL ERROR: NO TAGS FOUND");
-                telemetry.update();
-            }
-            robot.setMotorPower(0);
+            robot.MoveInchEncoder(-.6, 200);
+            robot.rotation(-.6, 90);
+            robot.fourBar.setPosition(fourBarPos);
+            robot.MoveInchEncoder(1, ticksToCones);
+            robot.claw(true);
+            sleep(250);
+            robot.MoveInchEncoder(-.6, ticksToCones);
+            robot.moveLift(1, "high");
+            robot.fourBar.setPosition(.5);
+            robot.rotation(.6, 90);
+            robot.MoveInchEncoder(.4, 200);
+            robot.claw(false);
+            ticksToCones-=20;
+            fourBarPos +=.05;
+            sleep(250);
+        }
+        if(tagOfInterest == 1) {
+            robot.Strafe(.6,2500);
+        } else if(tagOfInterest == 2) {
+            robot.MoveInchEncoder(.6,600);
+        } else if (tagOfInterest == 3) {
+            robot.Strafe(-.6,660);
+        } else {
+            telemetry.clearAll();
+            telemetry.addLine("FATAL ERROR: NO TAGS FOUND");
+            telemetry.update();
         }
     }
 }

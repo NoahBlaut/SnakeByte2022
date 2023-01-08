@@ -52,19 +52,18 @@ public class ParkAuto extends LinearOpMode {
         waitForStart();
 
         if(tagOfInterest == 1) {
-                robot.MoveInchEncoder(-1,950);
-                robot.Strafe(1, 1800);
-            } else if(tagOfInterest == 2) {
-            robot.MoveInchEncoder(-1,75);
-            robot.Strafe(1, 1800);
-            } else if (tagOfInterest == 3) {
-            robot.MoveInchEncoder(1,900);
-            robot.Strafe(1, 1800);
-            } else {
-                telemetry.clearAll();
-                telemetry.addLine("FATAL ERROR: NO TAGS FOUND");
-                telemetry.update();
-            }
+            robot.MoveInchEncoder(.6,1260);
+            robot.Strafe(.6,1260);
+        } else if(tagOfInterest == 2) {
+            robot.MoveInchEncoder(.6,1260);
+        } else if (tagOfInterest == 3) {
+            robot.MoveInchEncoder(.6,1260);
+            robot.Strafe(-.6,1260);
+        } else {
+            telemetry.clearAll();
+            telemetry.addLine("FATAL ERROR: NO TAGS FOUND");
+            telemetry.update();
+        }
     }
 }
 

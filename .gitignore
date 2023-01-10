@@ -98,3 +98,4 @@ lint/tmp/
 .AppleDouble
 .LSOverride
 ._*
+*.hprof

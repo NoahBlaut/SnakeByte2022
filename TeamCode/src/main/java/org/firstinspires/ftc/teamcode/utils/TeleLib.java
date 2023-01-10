@@ -21,7 +21,7 @@ public class TeleLib {
 
     public int liftPos = 0;
     public int fBPos = 0;
-    public double clawOpen = .8;
+    public double clawOpen = 1;
     public double clawClose = 0;
     public boolean isClosed = true;
     public double liftPower = 1;
@@ -148,41 +148,38 @@ public class TeleLib {
     }
 
     public void fourBar(OpMode opMode){
-        if(opMode.gamepad2.a) {
-            setFourBar(1);
-        }
-        if (opMode.gamepad2.b) {
+        if (opMode.gamepad2.x) {
             setFourBar(2);
         }
-        if (opMode.gamepad2.y) {
-            setFourBar(3);
-        }
-        if (opMode.gamepad2.x) {
-            setFourBar(4);
+        if(opMode.gamepad2.a){
+            setFourBar(1);
         }
     }
 
     public void setFourBar(int position) {
         switch(position) {
             case 1: {
-                fourbar.setPosition(0.6);
+                fourbar.setPosition(0);
                 fBPos = 1;
                 break;
             }
             case 2: {
-                fourbar.setPosition(0);
+                fourbar.setPosition(1);
                 fBPos= 4;
                 break;
             }
             case 3: {
-                fourbar.setPosition(.3);
+                fourbar.setPosition(.4);
                 fBPos = 5;
                 break;
             }
             case 4: {
-                fourbar.setPosition(.95);
+                fourbar.setPosition(1);
                 fBPos = 6;
                 break;
+            }
+            case 6: {
+                fourbar.setPosition(0.6);
             }
         }
     }

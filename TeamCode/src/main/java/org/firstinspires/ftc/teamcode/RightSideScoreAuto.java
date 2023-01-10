@@ -53,13 +53,14 @@ public class RightSideScoreAuto extends LinearOpMode {
 
         waitForStart();
         timeLeft.reset();
-        robot.MoveInchEncoder(.6,1960);
+        robot.MoveInchEncoder(.6,1860);
         robot.moveLift(1,"high");
         robot.fourBar.setPosition(.5);
-        robot.Strafe(.6,280);
+        sleep(500);
+        robot.Strafe(.6,600);
         robot.MoveInchEncoder(.4,350);
         robot.claw(false);
-        sleep(250);
+        sleep(500);
         double ticksToCones = 1540;
         double fourBarPos = .75;
         while(timeLeft.seconds() <= 23) {

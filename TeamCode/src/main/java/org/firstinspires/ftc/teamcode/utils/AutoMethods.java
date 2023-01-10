@@ -116,7 +116,7 @@ public class AutoMethods {
     public int getHeight(String code){
         int returnHeight = 0;
         if(code.equals("high")){
-            returnHeight = 3000;
+            returnHeight = 4000;
         }
         else if(code.equals("mid")){
             returnHeight = 3480;
@@ -184,10 +184,10 @@ public class AutoMethods {
 
     public void claw(boolean isOpen) {
         if(!isOpen){
-            claw.setPosition(.8);
+            claw.setPosition(1);
 
         } else {
-            claw.setPosition(.1);
+            claw.setPosition(0);
         }
     }
 

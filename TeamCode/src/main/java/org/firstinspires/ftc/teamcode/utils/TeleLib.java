@@ -15,7 +15,7 @@ public class TeleLib {
     public DcMotor bl;
     public DcMotor br;
     public DcMotor lift;
-    public DcMotor fourbar;
+    public Servo fourbar;
     public Servo claw;
     public BNO055IMU imu;
 
@@ -26,7 +26,6 @@ public class TeleLib {
     public boolean isClosed = true;
     public double liftPower = 1;
     public double slowPower = 0.5;
-    public double fourbarPower = .1;
 
     public TeleLib(OpMode opMode) {
         fl = opMode.hardwareMap.dcMotor.get("fl");
@@ -34,8 +33,7 @@ public class TeleLib {
         bl = opMode.hardwareMap.dcMotor.get("bl");
         br = opMode.hardwareMap.dcMotor.get("br");
         lift = opMode.hardwareMap.dcMotor.get("lift");
-        fourbar = opMode.hardwareMap.dcMotor.get("4bar");
-        fourbar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fourbar = opMode.hardwareMap.servo.get("4bar");
         claw = opMode.hardwareMap.servo.get("claw");
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -128,6 +126,8 @@ public class TeleLib {
                 Thread.sleep(100);
             }
         }
+        opMode.telemetry.addData("claw (isclosed):", isClosed);
+        opMode.telemetry.update();
     }
 
     public void lift(OpMode opMode) {
@@ -148,45 +148,38 @@ public class TeleLib {
     }
 
     public void fourBar(OpMode opMode){
-        if(opMode.gamepad2.left_stick_y > 0.1){
-            fourbar.setPower(.6);
-        } else if(opMode.gamepad2.left_stick_y < -0.1){
-            fourbar.setPower(-.6);
-        } else {
-            fourbar.setPower(0);
+        if (opMode.gamepad2.x) {
+            setFourBar(2);
+        }
+        if(opMode.gamepad2.a){
+            setFourBar(1);
         }
     }
 
     public void setFourBar(int position) {
         switch(position) {
             case 1: {
-                fourbar.setTargetPosition(0);
-                fourbar.setPower(fourbarPower);
+                fourbar.setPosition(0);
                 fBPos = 1;
                 break;
             }
             case 2: {
-                fourbar.setTargetPosition(0);
-                fourbar.setPower(fourbarPower);
-                fBPos= 2;
+                fourbar.setPosition(1);
+                fBPos= 4;
                 break;
             }
             case 3: {
-                fourbar.setTargetPosition(0);
-                fourbar.setPower(fourbarPower);
-                fBPos = 3;
+                fourbar.setPosition(.4);
+                fBPos = 5;
                 break;
             }
             case 4: {
-                fourbar.setTargetPosition(0);
-                fourbar.setPower(fourbarPower);
-                fBPos = 4;
+                fourbar.setPosition(1);
+                fBPos = 6;
                 break;
             }
-            case 5: {
-                fourbar.setTargetPosition(0);
-                fourbar.setPower(fourbarPower);
-                fBPos = 5;
+            case 6: {
+                fourbar.setPosition(0.6);
             }
         }
     }
@@ -197,7 +190,6 @@ public class TeleLib {
         bl.setPower(0);
         br.setPower(0);
         lift.setPower(0);
-        fourbar.setPower(0);
         claw.setPosition(clawOpen);
     }
 }

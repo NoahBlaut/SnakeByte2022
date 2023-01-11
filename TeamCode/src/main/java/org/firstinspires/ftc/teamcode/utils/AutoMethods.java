@@ -87,6 +87,9 @@ public class AutoMethods {
         claw = auto.hardwareMap.servo.get("claw");
         claw(true);
 
+        fourBar = auto.hardwareMap.servo.get("4bar");
+
+
         BNO055IMU imu = auto.hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -237,7 +240,7 @@ public class AutoMethods {
             error = lastError;
             PIDTimer.reset();
         }
-    }
 
+    }
 
 }

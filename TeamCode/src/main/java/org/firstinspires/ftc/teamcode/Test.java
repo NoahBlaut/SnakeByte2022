@@ -2,47 +2,50 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.AutoMethods;
 
-@Autonomous(name = "Test")
+@Autonomous(name = "test")
+
 public class Test extends LinearOpMode {
     AutoMethods robot = new AutoMethods();
-    ElapsedTime timeLeft = new ElapsedTime();
-
     @Override
     public void runOpMode() throws InterruptedException {
         robot.ready(this);
-        robot.fourBar.setPosition(0.9 );
+        robot.claw(true);
         waitForStart();
-        timeLeft.reset();
-        robot.MoveInchEncoder(.4,2150);
-        robot.moveLift(1,"high");
-        sleep(2000);
-        robot.fourBar.setPosition(.6);
-        sleep(2000);
-        robot.Strafe(-.4,600);
-        robot.MoveInchEncoder(.4,350);
-        sleep(1000);
+        sleep(100);
+        robot.MoveInchEncoder(.4,1150);
+        robot.fourBar.setPower(-.7);
+        sleep(900);
+        robot.fourBar.setPower(0);
+        //sleep(1000);
+        robot.MoveInchEncoder(.4,1100);
+        robot.moveLift(1,4000);
+        robot.Strafe(-.7, 500);
+        sleep(250);
+        robot.fourBar.setPower(1);
         robot.claw(false);
-        sleep(500);
-        /*while(timeLeft.seconds() <= 23) {
-            robot.MoveInchEncoder(-.6, 200);
-            robot.fourBar.setPosition(1);
-            robot.rotation(.6, 90);
-            robot.fourBar.setPosition(.85);
-            robot.MoveInchEncoder(1, 1540);
-            robot.claw(true);
-            sleep(250);
-            robot.MoveInchEncoder(-.6, 1540);
-            robot.moveLift(1, "high");
-            robot.fourBar.setPosition(.5);
-            robot.rotation(-1, 90);
-            robot.MoveInchEncoder(.4, 200);
-            robot.claw(false);
-            sleep(250);
-        }*/
-        sleep(10000);
+        sleep(1500);
+        /*
+        *   robot.rotation(-.5,90);
+        *   robot.moveLift(1,240);
+        *   robot.MoveInchEncoder(1,900);
+        *   robot.MoveInchEncoder(.4, 360);
+        *   robot.claw(true);
+        *   robot.moveLift(1,350);
+        *   robot.MoveInchEncoder(-.6, 900);
+        *   robot.rotation(-.5,90);
+        *   robot.moveLift(1,4000);
+        *   robot.MoveInchEncoder(-.6, 250);
+        *   robot.fourBar.setPower(-1);
+        *   sleep(2000);
+        *   robot.fourBar.setPower(0);
+        *   robot.claw(false);
+        *   sleep(1500);
+        *   robot.MoveInchEncoder(.6,250);
+        *   robot.rotation(.5, 45);
+        *   repeat this
+        */
     }
 }

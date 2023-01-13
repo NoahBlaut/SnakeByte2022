@@ -30,7 +30,7 @@ public class AutoMethods {
     public DcMotor br;
     public DcMotor lift;
 
-    public Servo fourBar;
+    public DcMotor fourBar;
 
     int ticks = 0;
     double tickstodegs = 5;
@@ -82,13 +82,14 @@ public class AutoMethods {
 
         lift = auto.hardwareMap.dcMotor.get("lift");
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        resetLiftEncoder();
+
 
         claw = auto.hardwareMap.servo.get("claw");
         claw(true);
 
-        fourBar = auto.hardwareMap.servo.get("4bar");
-
+        fourBar = auto.hardwareMap.dcMotor.get("4bar");
+        fourBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        resetLiftEncoder();
 
         BNO055IMU imu = auto.hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -128,15 +129,15 @@ public class AutoMethods {
             returnHeight = 800;
         }
         else if(code.equals("s5")){
-            returnHeight = 850;
+            returnHeight = 230;
         } else if(code.equals("s4")){
-            returnHeight = 775;
+            returnHeight = 200;
         } else if(code.equals("s3")){
-            returnHeight = 700;
+            returnHeight = 170;
         } else if(code.equals("s2")){
-            returnHeight=625;
+            returnHeight = 140;
         } else if(code.equals("s1")){
-            returnHeight=550;
+            returnHeight = 110;
         }
         else{
             returnHeight = 0;
@@ -144,8 +145,8 @@ public class AutoMethods {
         return returnHeight;
     }
 
-    public void moveLift(double speed, String position) {
-        ticks = getHeight(position);
+    public void moveLift(double speed, int position) {
+        int ticks = position;
         lift.setTargetPosition(-ticks);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(-speed);
@@ -214,6 +215,8 @@ public class AutoMethods {
     public void resetLiftEncoder() {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fourBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public int encoderAVG() {

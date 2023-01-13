@@ -54,30 +54,35 @@ public class LeftSideScoreAuto extends LinearOpMode {
         waitForStart();
         timeLeft.reset();
         robot.MoveInchEncoder(.6,1960);
-        robot.moveLift(1,"high");
-        robot.fourBar.setPosition(.5);
-        robot.Strafe(-.6,280);
+        robot.moveLift(1,4000);
+        robot.fourBar.setPower(.6);
+        robot.Strafe(-.6,600);
+        sleep(500);
+        robot.fourBar.setPower(0);
         robot.MoveInchEncoder(.4,350);
+        robot.fourBar.setPower(-1);
         robot.claw(false);
-        sleep(250);
+        sleep(500);
         double ticksToCones = 1540;
-        double fourBarPos = .75;
+        int liftPos = 240;;
         while(timeLeft.seconds() <= 23) {
 
             robot.MoveInchEncoder(-.6, 200);
+            robot.moveLift(1,liftPos);
             robot.rotation(-.6, 90);
-            robot.fourBar.setPosition(fourBarPos);
+            robot.fourBar.setPower(-.6);
             robot.MoveInchEncoder(1, ticksToCones);
             robot.claw(true);
             sleep(250);
+            robot.fourBar.setPower(.6);
             robot.MoveInchEncoder(-.6, ticksToCones);
-            robot.moveLift(1, "high");
-            robot.fourBar.setPosition(.5);
+            robot.moveLift(1, 4000);
             robot.rotation(.6, 90);
             robot.MoveInchEncoder(.4, 200);
+            robot.fourBar.setPower(-1);
             robot.claw(false);
             ticksToCones-=20;
-            fourBarPos +=.05;
+            liftPos -=40;
             sleep(250);
         }
         if(tagOfInterest == 1) {
